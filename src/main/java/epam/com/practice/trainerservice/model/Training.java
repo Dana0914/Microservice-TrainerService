@@ -1,26 +1,44 @@
 package epam.com.practice.trainerservice.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.time.LocalDate;
+
 
 
 @Entity
 @Table(name = "training")
-public class Training {
+public class Training implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime date;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    @Column(name = "training_date", columnDefinition = "DATE")
+    private LocalDate date;
+    @Column(name = "training_duration")
     private Integer duration;
-    @Enumerated(EnumType.STRING)
     @Column(name = "action_type")
-    private ActionType actionType;
+    private String actionType;
+    @ManyToOne
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
 
-    public Training(LocalDateTime date, Integer duration, ActionType actionType) {
+    public Training(LocalDate date,
+                    Integer duration,
+                    String actionType,
+                    Trainer trainer) {
         this.date = date;
         this.duration = duration;
         this.actionType = actionType;
+        this.trainer = trainer;
 
     }
 
@@ -28,10 +46,10 @@ public class Training {
 
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
     public Integer getDuration() {
@@ -49,10 +67,27 @@ public class Training {
     public Long getId() {
         return id;
     }
-    public ActionType getActionType() {
+    public String getActionType() {
         return actionType;
     }
-    public void setActionType(ActionType actionType) {
+    public void setActionType(String actionType) {
         this.actionType = actionType;
+    }
+    public Trainer getTrainer() {
+        return trainer;
+    }
+    public void setTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "id=" + id +
+                ", date=" + date +
+                ", duration=" + duration +
+                ", actionType=" + actionType +
+                ", trainer=" + trainer +
+                '}';
     }
 }
