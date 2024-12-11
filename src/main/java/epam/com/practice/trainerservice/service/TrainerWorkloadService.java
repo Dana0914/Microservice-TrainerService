@@ -2,6 +2,7 @@ package epam.com.practice.trainerservice.service;
 
 
 import epam.com.practice.trainerservice.dto.TrainersTrainingWorkloadDTO;
+import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
 import epam.com.practice.trainerservice.model.ActionType;
 import epam.com.practice.trainerservice.model.Trainer;
 import epam.com.practice.trainerservice.model.TrainerWorkload;
@@ -9,7 +10,6 @@ import epam.com.practice.trainerservice.model.Training;
 import epam.com.practice.trainerservice.repo.TrainerRepository;
 import epam.com.practice.trainerservice.repo.TrainerWorkloadRepository;
 import epam.com.practice.trainerservice.repo.TrainingRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class TrainerWorkloadService {
     }
 
 
-    public void addTrainerWorkload(TrainersTrainingWorkloadDTO request) {
+    public void updateTrainerWorkload(TrainersTrainingWorkloadDTO request) throws ResourceNotFoundException {
 
         Trainer trainer = new Trainer(request.getTrainerUsername(),
                 request.getTrainerFirstname(),
@@ -80,12 +80,12 @@ public class TrainerWorkloadService {
 
     }
 
-    public void calculateTrainingSessionPerTrainer(long trainerId, ActionType actionType) {
+    public void calculateTrainingSessionPerTrainer(long trainerId, ActionType actionType) throws ResourceNotFoundException {
         List<Training> trainingSessions = trainingRepository.findTrainingSessionByTrainerId(trainerId);
         for (Training training : trainingSessions) {
             if (training.getTrainer().getId() != trainerId) {
                 logger.error("Trainer with id {} does not exist", trainerId);
-                throw new EntityNotFoundException("Trainer with id " + trainerId + " does not exist");
+                throw new ResourceNotFoundException("Trainer with id " + trainerId + " does not exist");
             }
         }
         logger.info("Training session found by id");
@@ -130,11 +130,11 @@ public class TrainerWorkloadService {
         }
     }
 
-    public void updateTrainerWorkload(long id) {
+    public void updateTrainerWorkload(long id) throws ResourceNotFoundException {
         TrainerWorkload trainerWorkload = trainerWorkloadRepository
                 .findById(id)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Entity not found by id " + id));
+                        new ResourceNotFoundException("Entity not found by id " + id));
 
         logger.info("Trainer workload found by id {} ", trainerWorkload);
 
@@ -152,10 +152,12 @@ public class TrainerWorkloadService {
 
     }
 
-    public void getTrainingMonthlySummary() {
+    public List<TrainerWorkload> getTrainingMonthlySummary() {
         // list of monthly summary of training sessions per trainer
-        trainerWorkloadRepository.getTrainerMonthlySummary();
-        logger.info("Trainer monthly summary retrieved");
+        List<TrainerWorkload> trainerMonthlySummary = trainerWorkloadRepository.getTrainerMonthlySummary();
+        logger.info("Trainer monthly summary retrieved {}",  trainerWorkloadRepository.getTrainerMonthlySummary());
+
+        return trainerMonthlySummary;
 
     }
 }
