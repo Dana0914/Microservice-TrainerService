@@ -1,6 +1,7 @@
 package epam.com.practice.trainerservice.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +14,8 @@ public class Trainer {
     private String username;
     private String firstname;
     private String lastname;
-    @Column(insertable = false, name = "is_active")
+    @Column(name = "is_active")
+    @JsonProperty(value = "isActive")
     private Boolean isActive;
 
 
@@ -59,15 +61,12 @@ public class Trainer {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
-
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
-
     @Override
     public String toString() {
         return "Trainer{" +
