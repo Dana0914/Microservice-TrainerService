@@ -1,7 +1,7 @@
 package epam.com.practice.trainerservice.service;
 
 
-import epam.com.practice.trainerservice.dto.TrainersTrainingWorkloadDTO;
+import epam.com.practice.trainerservice.dto.TrainingDTO;
 import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
 import epam.com.practice.trainerservice.model.ActionType;
 import epam.com.practice.trainerservice.model.Trainer;
@@ -46,7 +46,7 @@ public class TrainerWorkloadService {
     }
 
 
-    public void updateTrainerWorkload(TrainersTrainingWorkloadDTO request) throws ResourceNotFoundException {
+    public void updateTrainerWorkload(TrainingDTO request) throws ResourceNotFoundException {
 
         Trainer trainer = new Trainer(request.getTrainerUsername(),
                 request.getTrainerFirstname(),
@@ -84,7 +84,6 @@ public class TrainerWorkloadService {
         List<Training> trainingSessions = trainingRepository.findTrainingSessionByTrainerId(trainerId);
         for (Training training : trainingSessions) {
             if (training.getTrainer().getId() != trainerId) {
-                logger.error("Trainer with id {} does not exist", trainerId);
                 throw new ResourceNotFoundException("Trainer with id " + trainerId + " does not exist");
             }
         }
