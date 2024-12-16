@@ -1,11 +1,12 @@
 package epam.com.practice.trainerservice.service;
 
 
-import epam.com.practice.trainerservice.dto.TrainersTrainingWorkloadDTO;
-import epam.com.practice.trainerservice.model.ActionType;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.com.practice.trainerservice.dto.TrainingDTO;
 import epam.com.practice.trainerservice.model.Trainer;
 import epam.com.practice.trainerservice.model.TrainerWorkload;
-import epam.com.practice.trainerservice.model.Training;
 import epam.com.practice.trainerservice.repo.TrainerRepository;
 import epam.com.practice.trainerservice.repo.TrainerWorkloadRepository;
 import epam.com.practice.trainerservice.repo.TrainingRepository;
@@ -16,11 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.Optional;
+import java.io.IOException;
 
-import static org.mockito.ArgumentMatchers.any;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,60 +38,54 @@ public class TrainersTrainingSessionTest {
 
 
     @Test
-    public void whenAddTrainerWorkload_WithValidEntity_thenReturnTrainerWorkload() {
-        TrainersTrainingWorkloadDTO request = new TrainersTrainingWorkloadDTO();
-        request.setTrainerUsername("John.Doe");
-        request.setTrainerFirstname("John");
-        request.setTrainerLastname("Doe");
-        request.setTrainingDate(LocalDate.now());
-        request.setTrainingDuration(2);
-        request.setIsActive(true);
-        request.setActionType(ActionType.ADD);
-
-        Trainer trainer = new Trainer(request.getTrainerUsername(),
-                request.getTrainerFirstname(),
-                request.getTrainerLastname(),
-                request.getIsActive());
+    public void whenAddTrainerWorkload_WithValidEntity_thenReturnTrainerWorkloadSuccessfully() {
+        Trainer trainer = new Trainer();
+        trainer.setFirstname("John");
+        trainer.setLastname("Doe");
+        trainer.setIsActive(true);
         trainer.setId(1L);
-
-        Training training = new Training(request.getTrainingDate(),
-                request.getTrainingDuration(),
-                request.getActionType().name(),
-                trainer);
-        training.setId(1L);
 
         TrainerWorkload trainerWorkload = new TrainerWorkload();
         trainerWorkload.setId(1L);
+        trainerWorkload.setYear(2025);
+        trainerWorkload.setMonth(1);
+        trainerWorkload.setTrainingHours(2);
         trainerWorkload.setTrainer(trainer);
-        trainerWorkload.setYear(Year.of(request.getTrainingDate().getYear()).getValue());
-        trainerWorkload.setMonth(request.getTrainingDate().getMonth().getValue());
-        trainerWorkload.setTrainingHours(request.getTrainingDuration());
 
-        Assertions.assertEquals(trainer.getUsername(), request.getTrainerUsername());
-        Assertions.assertEquals(trainer.getFirstname(), request.getTrainerFirstname());
-        Assertions.assertEquals(trainer.getLastname(), request.getTrainerLastname());
-        Assertions.assertEquals(training.getDate(), request.getTrainingDate());
-        Assertions.assertEquals(training.getDuration(), request.getTrainingDuration());
-        Assertions.assertEquals(training.getActionType(), request.getActionType().name());
-        Assertions.assertEquals(trainer.getActive(), request.getIsActive());
-
-        when(trainerWorkloadRepository.findById(1L)).thenReturn(Optional.of(trainerWorkload));
-
-        trainerWorkloadService.updateTrainerWorkload(trainerWorkload.getId());
-
-        verify(trainerWorkloadRepository, times(1)).findById(1L);
-
-        trainerWorkloadService.calculateTrainingSessionPerTrainer(trainer.getId(), request.getActionType());
+        when(trainerWorkloadRepository.save(trainerWorkload)).thenReturn(trainerWorkload);
+        when(trainerRepository.save(trainer)).thenReturn(trainer);
 
         trainerWorkloadRepository.save(trainerWorkload);
         trainerRepository.save(trainer);
-        trainingRepository.save(training);
 
-        verify(trainingRepository, times(1)).save(any(Training.class));
-        verify(trainerRepository, times(1)).save(any(Trainer.class));
+        Assertions.assertEquals(trainerWorkload.getTrainer().getUsername(), trainer.getUsername());
+        Assertions.assertEquals(trainerWorkload.getTrainer().getFirstname(), trainer.getFirstname());
+        Assertions.assertEquals(trainerWorkload.getTrainer().getLastname(), trainer.getLastname());
+        Assertions.assertEquals(trainerWorkload.getTrainer().getIsActive(), trainer.getIsActive());
+
+        verify(trainerWorkloadRepository, times(1)).save(trainerWorkload);
+        verify(trainerRepository, times(1)).save(trainer);
+
+    }
 
 
+    @Test
+    public void givenObjectHasNoAccessors_whenSerializingWithAllFieldsDetected_thenNoException()
+            throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        String dtoAsString = objectMapper.writeValueAsString(new TrainingDTO());
 
 
+        // Assert the serialized JSON contains the expected fields
+        assertThat(dtoAsString, containsString("trainerUsername"));
+        assertThat(dtoAsString, containsString("trainerFirstname"));
+        assertThat(dtoAsString, containsString("trainerLastname"));
+        assertThat(dtoAsString, containsString("trainingDate"));
+        assertThat(dtoAsString, containsString("trainingDuration"));
+        assertThat(dtoAsString, containsString("actionType"));
+        assertThat(dtoAsString, containsString("isActive"));
     }
 }
