@@ -46,7 +46,7 @@ public class TrainerWorkloadService {
     }
 
 
-    public void updateTrainerWorkload(TrainingDTO request) throws ResourceNotFoundException {
+    public void addTrainerWorkload(TrainingDTO request) throws ResourceNotFoundException {
 
         Trainer trainer = new Trainer(request.getTrainerUsername(),
                 request.getTrainerFirstname(),
@@ -74,8 +74,6 @@ public class TrainerWorkloadService {
         logger.info("Training workload created {} ", trainerWorkload);
 
         updateTrainerWorkload(trainerWorkload.getId());
-
-        calculateTrainingSessionPerTrainer(trainer.getId(), request.getActionType());
 
 
     }

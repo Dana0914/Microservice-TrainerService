@@ -41,7 +41,7 @@ public class TrainersTrainingSessionController {
             @RequestBody TrainingDTO trainersTrainingWorkloadRequest) {
 
         try {
-            trainerWorkloadService.updateTrainerWorkload(
+            trainerWorkloadService.addTrainerWorkload(
                     trainersTrainingWorkloadRequest);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(trainersTrainingWorkloadRequest, HttpStatus.NOT_FOUND);

@@ -11,17 +11,17 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConsumerService {
+public class TrainingSessionConsumerService {
 
     private final JmsTemplate jmsTemplate;
     private final TrainerWorkloadService trainerWorkloadService;
     private final ObjectMapper objectMapper;
-    private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TrainingSessionConsumerService.class);
 
 
-    public ConsumerService(JmsTemplate jmsTemplate,
-                           TrainerWorkloadService trainerWorkloadService,
-                           ObjectMapper objectMapper) {
+    public TrainingSessionConsumerService(JmsTemplate jmsTemplate,
+                                          TrainerWorkloadService trainerWorkloadService,
+                                          ObjectMapper objectMapper) {
 
         this.jmsTemplate = jmsTemplate;
         this.trainerWorkloadService = trainerWorkloadService;
@@ -34,11 +34,10 @@ public class ConsumerService {
             TrainingDTO trainingDTO = objectMapper.readValue(message, TrainingDTO.class);
             logger.info("Received Message: {}", message);
 
-            trainerWorkloadService.updateTrainerWorkload(trainingDTO);
+            trainerWorkloadService.addTrainerWorkload(trainingDTO);
             logger.info("Trainer workload updated");
         } catch (Exception e) {
             logger.error("Error while receiving message {}", e.getMessage());
         }
-
     }
 }
