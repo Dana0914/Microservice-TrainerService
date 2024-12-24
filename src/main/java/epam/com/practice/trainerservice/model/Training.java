@@ -6,35 +6,34 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 
 
-@Entity
-@Table(name = "training")
+@Document
 public class Training implements Serializable {
+    @Transient
+    public static final String SEQUENCE_NAME = "training_sequence";
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
-    @Column(name = "training_date", columnDefinition = "DATE")
     private LocalDate date;
-    @Column(name = "training_duration")
     private Integer duration;
-    @Column(name = "action_type")
     private String actionType;
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
+    @DBRef
     private Trainer trainer;
 
     public Training(LocalDate date,
                     Integer duration,
                     String actionType,
                     Trainer trainer) {
+        super();
         this.date = date;
         this.duration = duration;
         this.actionType = actionType;

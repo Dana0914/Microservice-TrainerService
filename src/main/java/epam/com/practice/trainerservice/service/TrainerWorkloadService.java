@@ -3,10 +3,7 @@ package epam.com.practice.trainerservice.service;
 
 import epam.com.practice.trainerservice.dto.TrainingDTO;
 import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
-import epam.com.practice.trainerservice.model.ActionType;
-import epam.com.practice.trainerservice.model.Trainer;
-import epam.com.practice.trainerservice.model.TrainerWorkload;
-import epam.com.practice.trainerservice.model.Training;
+import epam.com.practice.trainerservice.model.*;
 import epam.com.practice.trainerservice.repo.TrainerRepository;
 import epam.com.practice.trainerservice.repo.TrainerWorkloadRepository;
 import epam.com.practice.trainerservice.repo.TrainingRepository;
@@ -19,12 +16,15 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
 
+
 @Service
 public class TrainerWorkloadService {
 
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
     private final TrainerWorkloadRepository trainerWorkloadRepository;
+    private final TrainingService trainingService;
+    private final SequenceGenerator sequenceGenerator;
 
     private Map<YearMonth, Integer> yearMonthHours;
     private static final Logger logger = LoggerFactory.getLogger(TrainerWorkloadService.class);
@@ -36,13 +36,15 @@ public class TrainerWorkloadService {
 
             TrainerRepository trainerRepository,
             TrainingRepository trainingRepository,
-            TrainerWorkloadRepository trainerWorkloadRepository) {
+            TrainerWorkloadRepository trainerWorkloadRepository,
+            TrainingService trainingService, SequenceGenerator sequenceGenerator) {
 
         this.trainerRepository = trainerRepository;
         this.trainingRepository = trainingRepository;
         this.trainerWorkloadRepository = trainerWorkloadRepository;
+        this.sequenceGenerator = sequenceGenerator;
         yearMonthHours = new HashMap<>();
-
+        this.trainingService = trainingService;
     }
 
 
@@ -53,6 +55,8 @@ public class TrainerWorkloadService {
                 request.getTrainerLastname(),
                 request.getIsActive());
 
+        trainer.setId(sequenceGenerator.generateSequence(Trainer.SEQUENCE_NAME));
+
         trainerRepository.save(trainer);
         logger.info("Trainer created {} ", trainer);
 
@@ -60,11 +64,12 @@ public class TrainerWorkloadService {
                 request.getTrainingDuration(),
                 request.getActionType().name(),
                 trainer);
-
+        training.setId(sequenceGenerator.generateSequence(Training.SEQUENCE_NAME));
         trainingRepository.save(training);
         logger.info("Training created {} ", training);
 
         TrainerWorkload trainerWorkload = new TrainerWorkload();
+        trainerWorkload.setId(sequenceGenerator.generateSequence(TrainerWorkload.SEQUENCE_NAME));
         trainerWorkload.setTrainer(trainer);
         trainerWorkload.setYear(Year.of(request.getTrainingDate().getYear()).getValue());
         trainerWorkload.setMonth(request.getTrainingDate().getMonth().getValue());
@@ -75,13 +80,15 @@ public class TrainerWorkloadService {
 
         updateTrainerWorkload(trainerWorkload.getId());
 
+        calculateTrainingSessionPerTrainer(trainer.getId(),  request.getActionType());
+
 
     }
 
-    public void calculateTrainingSessionPerTrainer(long trainerId, ActionType actionType) throws ResourceNotFoundException {
-        List<Training> trainingSessions = trainingRepository.findTrainingSessionByTrainerId(trainerId);
+    public void calculateTrainingSessionPerTrainer(Long trainerId, ActionType actionType) throws ResourceNotFoundException {
+        List<Training> trainingSessions = trainingService.findTrainingSessionByTrainerId(trainerId);
         for (Training training : trainingSessions) {
-            if (training.getTrainer().getId() != trainerId) {
+            if (!training.getTrainer().getId().equals(trainerId)) {
                 throw new ResourceNotFoundException("Trainer with id " + trainerId + " does not exist");
             }
         }
@@ -145,14 +152,16 @@ public class TrainerWorkloadService {
         }
 
         trainerWorkloadRepository.save(trainerWorkload);
+
+        System.out.println(trainerWorkload);
         logger.info("Trainer workload updated {} ", trainerWorkload);
 
     }
 
     public List<TrainerWorkload> getTrainingMonthlySummary() {
         // list of monthly summary of training sessions per trainer
-        List<TrainerWorkload> trainerMonthlySummary = trainerWorkloadRepository.getTrainerMonthlySummary();
-        logger.info("Trainer monthly summary retrieved {}",  trainerWorkloadRepository.getTrainerMonthlySummary());
+        List<TrainerWorkload> trainerMonthlySummary = trainerWorkloadRepository.findAll();
+        logger.info("Trainer monthly summary retrieved {}",  trainerMonthlySummary);
 
         return trainerMonthlySummary;
 

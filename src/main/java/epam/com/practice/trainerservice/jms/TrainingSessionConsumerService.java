@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +30,7 @@ public class TrainingSessionConsumerService {
     }
 
     @JmsListener(destination = "trainingDTO queue", containerFactory = "jmsListenerContainerFactory")
-    public void receiveMessage(String message) {
+    public void receiveMessage(@Payload String message) {
         try {
             TrainingDTO trainingDTO = objectMapper.readValue(message, TrainingDTO.class);
             logger.info("Received Message: {}", message);

@@ -1,29 +1,28 @@
 package epam.com.practice.trainerservice.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
-
-@Entity
-@Table(name = "trainer_workload")
+@Document
 public class TrainerWorkload {
+    @Transient
+    public static final String SEQUENCE_NAME = "trainer_workload_sequence";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "training_hours")
     private Integer trainingHours;
-    @Column(name = "years")
     private Integer year;
-    @Column(name = "months")
     private Integer month;
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
+    @DBRef
     private Trainer trainer;
     public TrainerWorkload() {
 
     }
 
     public TrainerWorkload(Integer trainingHours, Trainer trainer, Integer year, Integer month) {
+        super();
         this.trainingHours = trainingHours;
         this.trainer = trainer;
         this.year = year;
