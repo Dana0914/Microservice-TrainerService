@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 
@@ -19,31 +20,32 @@ public class Training implements Serializable {
     @Transient
     public static final String SEQUENCE_NAME = "training_sequence";
     @Id
-    private Long id;
+    private BigInteger id;
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     private LocalDate date;
     private Integer duration;
     private String actionType;
+
+
     @DBRef
     private Trainer trainer;
 
-    public Training(LocalDate date,
-                    Integer duration,
-                    String actionType,
-                    Trainer trainer) {
-        super();
+
+    public Training(LocalDate date, Integer duration, String actionType) {
         this.date = date;
         this.duration = duration;
         this.actionType = actionType;
-        this.trainer = trainer;
+
+
 
     }
 
     public Training() {
 
     }
+
 
     public LocalDate getDate() {
         return date;
@@ -59,13 +61,13 @@ public class Training implements Serializable {
     }
 
 
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
-
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
+
     public String getActionType() {
         return actionType;
     }
@@ -85,8 +87,7 @@ public class Training implements Serializable {
                 "id=" + id +
                 ", date=" + date +
                 ", duration=" + duration +
-                ", actionType=" + actionType +
-                ", trainer=" + trainer +
+                ", actionType='" + actionType + '\'' +
                 '}';
     }
 }

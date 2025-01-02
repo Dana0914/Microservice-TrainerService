@@ -1,5 +1,6 @@
 package epam.com.practice.trainerservice.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class SequenceGenerator {
         this.mongoOperations = mongoOperations;
     }
 
-    public long generateSequence(String seqName) {
+    public Long generateSequence(String seqName) {
         DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
                 new Update().inc("seq",1), options().returnNew(true).upsert(true),
                 DatabaseSequence.class);

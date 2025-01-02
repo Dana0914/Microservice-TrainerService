@@ -1,6 +1,8 @@
 package epam.com.practice.trainerservice.service;
 
 
+
+import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
 import epam.com.practice.trainerservice.model.Trainer;
 import epam.com.practice.trainerservice.repo.TrainerRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,15 @@ public class TrainerService {
     }
 
     public Trainer findTrainerById(long id) {
-        return trainerRepository.findById(id).orElseThrow();
+        return trainerRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Trainer not found"));
     }
+
+    public Trainer findTrainerByUsername(String username) {
+        return trainerRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Trainer not found"));
+    }
+
 }

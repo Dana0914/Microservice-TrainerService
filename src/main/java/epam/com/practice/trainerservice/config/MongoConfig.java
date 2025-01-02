@@ -6,8 +6,9 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import epam.com.practice.trainerservice.repo.TrainerRepository;
-import epam.com.practice.trainerservice.repo.TrainerWorkloadRepository;
 import epam.com.practice.trainerservice.repo.TrainingRepository;
+import epam.com.practice.trainerservice.repo.TrainingSummaryRepository;
+import epam.com.practice.trainerservice.service.TrainingService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +18,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableMongoRepositories(basePackageClasses = {TrainerRepository.class, TrainerWorkloadRepository.class,
-TrainingRepository.class})
+@EnableMongoRepositories(basePackageClasses = {TrainerRepository.class, TrainingRepository.class,
+TrainingSummaryRepository.class})
 public class MongoConfig {
 
     @Value(value = "${spring.data.mongodb.uri}")

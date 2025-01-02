@@ -27,8 +27,7 @@ public class TrainingService {
     public List<Training> findTrainingSessionByTrainerId(Long trainerId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("trainer_id").is(trainerId));
-        List<Training> trainings = template.find(query, Training.class);
-        return trainings;
+        return template.find(query, Training.class);
 
     }
 

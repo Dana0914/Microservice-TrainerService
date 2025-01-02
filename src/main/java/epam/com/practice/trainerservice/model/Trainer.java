@@ -3,18 +3,22 @@ package epam.com.practice.trainerservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigInteger;
 
 
-@Document
+@Document(collection = "trainer")
 public class Trainer {
 
     @Transient
     public static final String SEQUENCE_NAME = "trainer_sequence";
 
     @Id
-    private Long id;
+    private BigInteger id;
+    @Indexed(unique = true)
     private String username;
     private String firstname;
     private String lastname;
@@ -38,11 +42,10 @@ public class Trainer {
 
     }
 
-
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
