@@ -1,26 +1,44 @@
 package epam.com.practice.trainerservice.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.time.LocalDate;
 
 
-@Entity
-@Table(name = "training")
-public class Training {
+
+@Document
+public class Training implements Serializable {
+    @Transient
+    public static final String SEQUENCE_NAME = "training_sequence";
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private LocalDateTime date;
+    private BigInteger id;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    private LocalDate date;
     private Integer duration;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "action_type")
-    private ActionType actionType;
+    private String actionType;
 
-    public Training(LocalDateTime date, Integer duration, ActionType actionType) {
+
+    @DBRef
+    private Trainer trainer;
+
+
+    public Training(LocalDate date, Integer duration, String actionType) {
         this.date = date;
         this.duration = duration;
         this.actionType = actionType;
+
+
 
     }
 
@@ -28,10 +46,11 @@ public class Training {
 
     }
 
-    public LocalDateTime getDate() {
+
+    public LocalDate getDate() {
         return date;
     }
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
     public Integer getDuration() {
@@ -42,17 +61,33 @@ public class Training {
     }
 
 
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
-
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
-    public ActionType getActionType() {
+
+    public String getActionType() {
         return actionType;
     }
-    public void setActionType(ActionType actionType) {
+    public void setActionType(String actionType) {
         this.actionType = actionType;
+    }
+    public Trainer getTrainer() {
+        return trainer;
+    }
+    public void setTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "id=" + id +
+                ", date=" + date +
+                ", duration=" + duration +
+                ", actionType='" + actionType + '\'' +
+                '}';
     }
 }
