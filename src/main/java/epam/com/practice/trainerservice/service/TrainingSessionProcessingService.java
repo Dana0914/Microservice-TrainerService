@@ -66,20 +66,6 @@ public class TrainingSessionProcessingService {
 
 
     }
-//    public void updateTrainingRecord(TrainingDTO request, Trainer trainer) throws ResourceNotFoundException {
-//        Training training = new Training();
-//        training.setDuration(request.getTrainingDuration());
-//        training.setTrainer(trainer);
-//        training.setDate(request.getTrainingDate());
-//        training.setActionType(request.getActionType().name());
-//        training.setId(BigInteger.valueOf(sequenceGenerator.generateSequence(Training.SEQUENCE_NAME)));
-//
-//        trainingService.createTraining(training);
-//        logger.info("Training created {} ", training);
-//
-//        calculateTrainingSummaryPerYearAndMonth(training);
-//    }
-
 
     public void calculateTrainingSummaryPerYearAndMonth(Training training) throws ResourceNotFoundException {
         Optional<TrainingSummary> trainingSummary = trainingSummaryService

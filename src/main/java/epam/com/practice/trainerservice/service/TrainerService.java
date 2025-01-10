@@ -25,10 +25,9 @@ public class TrainerService {
         trainerRepository.save(trainer);
     }
 
-    public Trainer findById(BigInteger id) {
+    public Optional<Trainer> findById(BigInteger id) {
         return trainerRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Trainer not found"));
+                .findById(id);
     }
 
     public Optional<Trainer> findTrainerByUsername(String username) {

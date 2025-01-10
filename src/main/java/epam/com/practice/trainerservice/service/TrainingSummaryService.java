@@ -53,4 +53,8 @@ public class TrainingSummaryService {
         return Optional.ofNullable(mongoTemplate.findOne(query, TrainingSummary.class));
 
     }
+
+    public TrainingSummary findTrainingSummaryById(BigInteger id) {
+        return trainingSummaryRepository.findById(id).orElse(null);
+    }
 }
