@@ -2,7 +2,7 @@ package epam.com.practice.trainerservice.controller;
 
 import epam.com.practice.trainerservice.dto.TrainingDTO;
 import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
-import epam.com.practice.trainerservice.service.TrainerWorkloadService;
+import epam.com.practice.trainerservice.service.TrainingSessionProcessingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "api/workload")
-public class TrainersTrainingSessionController {
+public class TrainingSummaryProcessingController {
 
-    private final TrainerWorkloadService trainerWorkloadService;
+    private final TrainingSessionProcessingService processingService;
 
-    public TrainersTrainingSessionController(TrainerWorkloadService trainerWorkloadService) {
-        this.trainerWorkloadService = trainerWorkloadService;
+    public TrainingSummaryProcessingController(TrainingSessionProcessingService processingService) {
+        this.processingService = processingService;
     }
+
 
     @Operation(summary = "Update training session")
     @ApiResponses(value = {
@@ -38,20 +39,16 @@ public class TrainersTrainingSessionController {
 
     @PostMapping
     public ResponseEntity<TrainingDTO> updateTrainersTrainingWorkload(
-            @RequestBody TrainingDTO trainersTrainingWorkloadRequest) {
+            @RequestBody TrainingDTO request) {
 
         try {
-            trainerWorkloadService.addTrainerWorkload(
-                    trainersTrainingWorkloadRequest);
+            processingService.updateTrainerRecord(request);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(trainersTrainingWorkloadRequest, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(request, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(trainersTrainingWorkloadRequest, HttpStatus.OK);
+        return new ResponseEntity<>(request, HttpStatus.OK);
 
     }
 
-    @GetMapping(value = "/summary")
-    public Object getTrainerMonthlySummary() {
-        return trainerWorkloadService.getTrainingMonthlySummary();
-    }
+
 }

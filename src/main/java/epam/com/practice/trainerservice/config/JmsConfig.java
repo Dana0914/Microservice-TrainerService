@@ -64,8 +64,9 @@ public class JmsConfig {
         DefaultJmsListenerContainerFactory containerFactory = new DefaultJmsListenerContainerFactory();
         containerFactory.setConnectionFactory(connectionFactory());
         containerFactory.setMessageConverter(jacksonJmsMsgConverter());
-        containerFactory.setErrorHandler(new JmsErrorHandler()
-        );
+        containerFactory.setErrorHandler(new JmsErrorHandler());
+        containerFactory.setConcurrency("1-1"); // Limit to one consumer thread
+        containerFactory.setPubSubDomain(false); // Use queues instead of topics
         return containerFactory;
     }
 
@@ -101,5 +102,10 @@ public class JmsConfig {
         factory.afterPropertiesSet();
         return factory;
     }
+
+
+
+
+
 
 }
