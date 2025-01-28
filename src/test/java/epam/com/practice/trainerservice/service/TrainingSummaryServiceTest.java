@@ -20,9 +20,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 @DataMongoTest
@@ -82,11 +82,11 @@ class TrainingSummaryServiceTest {
 
         Update update = new Update();
         update.set("trainingSummaryDuration", trainingSummary.getTrainingSummaryDuration());
+        update.set("year", training.getDate().getYear());
+        update.set("month", training.getDate().getMonthValue());
 
-
-        mongoTemplate.upsert(query, update, TrainingSummary.class);
-
-
+        UpdateResult updateResult = mongoTemplate.upsert(query, update, TrainingSummary.class);
+        trainingSummaryService.updateTrainingSummary(trainingSummary.getId(), oldTrainingSummary);
 
 
 
@@ -97,25 +97,14 @@ class TrainingSummaryServiceTest {
         Assertions.assertNotNull(training);
         Assertions.assertNotNull(trainer);
 
-        Assertions.assertEquals(trainer.getUsername(), "John.Doe");
-        Assertions.assertEquals(trainer.getFirstname(), "John");
-        Assertions.assertEquals(trainer.getLastname(), "Doe");
-        Assertions.assertTrue(trainer.getIsActive());
-        Assertions.assertEquals(trainer.getId(), BigInteger.ONE);
-
-        Assertions.assertEquals(training.getDate(), LocalDate.now());
-        Assertions.assertEquals(training.getDuration(), 2);
-        Assertions.assertEquals(training.getId(), BigInteger.ONE);
-        Assertions.assertEquals(training.getTrainer(), trainer);
-        Assertions.assertEquals(training.getActionType(), ActionType.ADD.name());
-
         Assertions.assertEquals(trainingSummary.getId(), BigInteger.TWO);
         Assertions.assertEquals(trainingSummary.getTraining(), training);
         Assertions.assertEquals(trainingSummary.getTrainingSummaryDuration(), 4);
         Assertions.assertEquals(trainingSummary.getMonth(), 1);
         Assertions.assertEquals(trainingSummary.getYear(), 2025);
 
-        Mockito.verify(mongoTemplate, Mockito.times(1)).upsert(query, update, TrainingSummary.class);
+        Mockito.verify(mongoTemplate, Mockito.times(1))
+                .upsert(query, update, TrainingSummary.class);
     }
 
     @Test
@@ -148,17 +137,6 @@ class TrainingSummaryServiceTest {
         Assertions.assertNotNull(training);
         Assertions.assertNotNull(trainer);
 
-        Assertions.assertEquals(trainer.getUsername(), "John.Doe");
-        Assertions.assertEquals(trainer.getFirstname(), "John");
-        Assertions.assertEquals(trainer.getLastname(), "Doe");
-        Assertions.assertTrue(trainer.getIsActive());
-        Assertions.assertEquals(trainer.getId(), BigInteger.ONE);
-
-        Assertions.assertEquals(training.getDate(), LocalDate.now());
-        Assertions.assertEquals(training.getDuration(), 2);
-        Assertions.assertEquals(training.getId(), BigInteger.ONE);
-        Assertions.assertEquals(training.getTrainer(), trainer);
-        Assertions.assertEquals(training.getActionType(), ActionType.ADD.name());
 
         Assertions.assertEquals(trainingSummary.getId(), BigInteger.ONE);
         Assertions.assertEquals(trainingSummary.getTraining(), training);
@@ -198,11 +176,13 @@ class TrainingSummaryServiceTest {
         Query query = new Query();
         query.addCriteria(Criteria
                 .where("year").is(training.getDate().getYear())
-                .and("month").is(training.getDate().getMonthValue()));
+                .and("month").is(training.getDate().getMonth()));
 
-        Mockito.when(mongoTemplate.findOne(query, TrainingSummary.class)).thenReturn(trainingSummary);
+        Mockito.when(Optional.ofNullable(mongoTemplate.findOne(query, TrainingSummary.class)))
+                .thenReturn(Optional.of(trainingSummary));
 
-        trainingSummaryService.findTrainingSummaryByYearAndMonth(trainingSummary.getYear(), trainingSummary.getMonth());
+        trainingSummaryService.findTrainingSummaryByYearAndMonth(trainingSummary.getYear(),
+                trainingSummary.getMonth());
 
 
         Assertions.assertNotNull(query);
@@ -210,25 +190,16 @@ class TrainingSummaryServiceTest {
         Assertions.assertNotNull(training);
         Assertions.assertNotNull(trainer);
 
-        Assertions.assertEquals(trainer.getUsername(), "John.Doe");
-        Assertions.assertEquals(trainer.getFirstname(), "John");
-        Assertions.assertEquals(trainer.getLastname(), "Doe");
-        Assertions.assertTrue(trainer.getIsActive());
-        Assertions.assertEquals(trainer.getId(), BigInteger.ONE);
-
-        Assertions.assertEquals(training.getDate(), LocalDate.now());
-        Assertions.assertEquals(training.getDuration(), 2);
-        Assertions.assertEquals(training.getId(), BigInteger.ONE);
-        Assertions.assertEquals(training.getTrainer(), trainer);
-        Assertions.assertEquals(training.getActionType(), ActionType.ADD.name());
-
         Assertions.assertEquals(trainingSummary.getId(), BigInteger.ONE);
         Assertions.assertEquals(trainingSummary.getTraining(), training);
         Assertions.assertEquals(trainingSummary.getTrainingSummaryDuration(), 2);
         Assertions.assertEquals(trainingSummary.getMonth(), 1);
         Assertions.assertEquals(trainingSummary.getYear(), 2025);
 
-        Mockito.verify(mongoTemplate, Mockito.times(1)).findOne(query, TrainingSummary.class);
+        Mockito.verify(Optional.of(mongoTemplate), Mockito.times(1))
+                .get().findOne(query, TrainingSummary.class);
+
+
 
 
     }

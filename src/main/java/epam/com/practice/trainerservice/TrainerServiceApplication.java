@@ -6,8 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.jms.annotation.EnableJms;
 
 
-
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
+})
 @EnableDiscoveryClient
 @EnableJms
 public class TrainerServiceApplication {

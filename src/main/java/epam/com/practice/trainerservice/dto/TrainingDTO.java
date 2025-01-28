@@ -3,7 +3,7 @@ package epam.com.practice.trainerservice.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import epam.com.practice.trainerservice.model.ActionType;
-import jakarta.persistence.Column;
+
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -14,7 +14,6 @@ public class TrainingDTO implements Serializable {
     private String trainerFirstname;
     private String trainerLastname;
     @JsonProperty(value = "isActive")
-    @Column(name = "is_active")
     private Boolean isActive;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate trainingDate;
