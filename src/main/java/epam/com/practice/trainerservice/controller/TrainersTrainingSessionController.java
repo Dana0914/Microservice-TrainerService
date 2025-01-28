@@ -1,6 +1,6 @@
 package epam.com.practice.trainerservice.controller;
 
-import epam.com.practice.trainerservice.dto.TrainersTrainingWorkloadDTO;
+import epam.com.practice.trainerservice.dto.TrainingDTO;
 import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
 import epam.com.practice.trainerservice.service.TrainerWorkloadService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +27,9 @@ public class TrainersTrainingSessionController {
     @Operation(summary = "Update training session")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the training session",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TrainersTrainingWorkloadDTO.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TrainingDTO.class))}),
             @ApiResponse(responseCode = "201", description = "Training session created",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TrainersTrainingWorkloadDTO.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TrainingDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden - You don't have permission", content = @Content),
@@ -37,11 +37,11 @@ public class TrainersTrainingSessionController {
     })
 
     @PostMapping
-    public ResponseEntity<TrainersTrainingWorkloadDTO> updateTrainersTrainingWorkload(
-            @RequestBody TrainersTrainingWorkloadDTO trainersTrainingWorkloadRequest) {
+    public ResponseEntity<TrainingDTO> updateTrainersTrainingWorkload(
+            @RequestBody TrainingDTO trainersTrainingWorkloadRequest) {
 
         try {
-            trainerWorkloadService.updateTrainerWorkload(
+            trainerWorkloadService.addTrainerWorkload(
                     trainersTrainingWorkloadRequest);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(trainersTrainingWorkloadRequest, HttpStatus.NOT_FOUND);

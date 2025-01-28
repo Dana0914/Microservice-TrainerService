@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import epam.com.practice.trainerservice.model.ActionType;
 import jakarta.persistence.Column;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TrainersTrainingWorkloadDTO {
+public class TrainingDTO implements Serializable {
 
     private String trainerUsername;
     private String trainerFirstname;
     private String trainerLastname;
-    @JsonProperty(value = "active")
+    @JsonProperty(value = "isActive")
     @Column(name = "is_active")
     private Boolean isActive;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -21,21 +22,29 @@ public class TrainersTrainingWorkloadDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private ActionType actionType;
 
-    public TrainersTrainingWorkloadDTO() {
+    public TrainingDTO() {
 
     }
 
-    public TrainersTrainingWorkloadDTO(String trainerUsername, String trainerFirstname,
-                                       String trainerLastname, Boolean isActive, LocalDate trainingDate,
-                                       Integer trainingDuration, ActionType actionType) {
+    public TrainingDTO(String trainerUsername,
+                       String trainerFirstname,
+                       String trainerLastname,
+                       Boolean isActive,
+                       LocalDate trainingDate,
+                       Integer trainingDuration,
+                       ActionType actionType) {
+
         this.trainerUsername = trainerUsername;
         this.trainerFirstname = trainerFirstname;
         this.trainerLastname = trainerLastname;
         this.isActive = isActive;
-        this.actionType = actionType;
         this.trainingDate = trainingDate;
         this.trainingDuration = trainingDuration;
+        this.actionType = actionType;
+
+
     }
+
 
     public String getTrainerUsername() {
         return trainerUsername;
