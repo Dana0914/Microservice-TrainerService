@@ -1,6 +1,6 @@
 package epam.com.practice.trainerservice.cucumber.steps;
 
-import epam.com.practice.trainerservice.handler.exceptions.ResourceNotFoundException;
+import epam.com.practice.trainerservice.cucumber.CucumberSpringConfig;
 import epam.com.practice.trainerservice.model.Trainer;
 import epam.com.practice.trainerservice.service.TrainerService;
 import io.cucumber.datatable.DataTable;
@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Assertions;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
-public class TrainerStepDefinition {
+
+public class TrainerStepDefinition extends CucumberSpringConfig {
     private final TrainerService trainerService;
-    Trainer trainer;
-    Trainer foundTrainer;
+    private Trainer trainer;
+    private Trainer foundTrainer;
 
     public TrainerStepDefinition(TrainerService trainerService) {
         this.trainerService = trainerService;
@@ -25,7 +25,7 @@ public class TrainerStepDefinition {
     }
 
     @Given("a trainer exists with the following details:")
-    public void a_trainer_exists_with_the_following_details(DataTable dataTable) {
+    public void aTrainerExistsWithTheFollowingDetails(DataTable dataTable) {
         List<Map<String, String>> trainerData = dataTable.asMaps(String.class, String.class);
         Map<String, String> trainerMap = trainerData.getFirst();
 
@@ -40,8 +40,9 @@ public class TrainerStepDefinition {
 
     }
 
-    @Given("create trainer with the following details:")
-    public void createTrainerWithTheFollowingDetails(DataTable dataTable) {
+    @Given("I create trainer with the following details:")
+    public void iCreateTrainerWithTheFollowingDetails(DataTable dataTable) {
+
         List<Map<String, String>> trainerData = dataTable.asMaps(String.class, String.class);
         Map<String, String> trainerMap = trainerData.getFirst();
 
@@ -51,8 +52,6 @@ public class TrainerStepDefinition {
         trainer.setFirstname(trainerMap.get("firstname"));
         trainer.setLastname(trainerMap.get("lastname"));
         trainer.setIsActive(Boolean.valueOf(trainerMap.get("isActive")));
-
-        trainerService.createTrainer(trainer);
 
     }
 
@@ -69,8 +68,8 @@ public class TrainerStepDefinition {
 
     }
 
-    @Then("the response should include the following details:")
-    public void the_response_should_include_the_following_details(DataTable dataTable) {
+    @Then("the trainer should include the following details:")
+    public void theTrainerShouldIncludeTheFollowingDetails(DataTable dataTable) {
         List<Map<String, String>> trainerData = dataTable.asMaps(String.class, String.class);
         Map<String, String> trainerMap = trainerData.getFirst();
 
@@ -80,7 +79,7 @@ public class TrainerStepDefinition {
     }
 
     @When("I search for trainer with id {int}")
-    public void iSearchForTrainerWithId(int arg0)  {
+    public void iSearchForTrainerWithIdId(int arg0) {
         foundTrainer = trainerService.findById(BigInteger.valueOf(arg0)).orElse(null);
     }
 

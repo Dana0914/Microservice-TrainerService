@@ -1,5 +1,5 @@
 Feature: Find training by id
-  Scenario: Successfully find a training by ID
+  Scenario: I search for a training by ID
     Given the training exists with the following details:
       | id | trainerId   | date            | actionType | duration |
       | 15  | 1          | 2025-01-01      | ADD        | 2        |

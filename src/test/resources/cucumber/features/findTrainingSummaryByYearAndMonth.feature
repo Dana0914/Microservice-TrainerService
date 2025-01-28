@@ -1,5 +1,5 @@
 Feature: Find training summary by year and month
-  Scenario: Successfully find a training summary by year and month
+  Scenario: I search for a training summary by year and month
     Given the training summary exists with the following details:
       | id | month   | year | trainingSummaryDuration | trainingId |
       | 1  | 01      | 2025 | 2                       | 1          |
@@ -8,7 +8,7 @@ Feature: Find training summary by year and month
       | id | month   | year | trainingSummaryDuration | trainingId |
       | 1  | 01      | 2025 | 2                       | 1          |
 
-  Scenario: Searching training summary with a non-existent year and month
+  Scenario: I search training summary with a non-existent year and month
     Given the training summary exists with the following details:
       | id | month   | year | trainingSummaryDuration | trainingId |
       | 1  | 01      | 2025 | 2                       | 1          |

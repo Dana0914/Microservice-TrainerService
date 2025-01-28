@@ -1,6 +1,7 @@
 package epam.com.practice.trainerservice.service;
 
 
+import com.mongodb.client.result.UpdateResult;
 import epam.com.practice.trainerservice.model.TrainingSummary;
 import epam.com.practice.trainerservice.repo.TrainingSummaryRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,7 +27,7 @@ public class TrainingSummaryService {
     }
 
 
-    public void updateTrainingSummary(BigInteger id, TrainingSummary trainingSummary) {
+    public UpdateResult updateTrainingSummary(BigInteger id, TrainingSummary trainingSummary) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id)
                 .and("year").is(trainingSummary.getYear())
@@ -38,7 +39,9 @@ public class TrainingSummaryService {
         update.set("month", trainingSummary.getMonth());
         update.set("training", trainingSummary.getTraining());
 
-        mongoTemplate.upsert(query, update, TrainingSummary.class);
+        UpdateResult upsert = mongoTemplate.upsert(query, update, TrainingSummary.class);
+
+        return upsert;
     }
 
     public void createTrainingSummary(TrainingSummary trainingSummary) {
@@ -53,6 +56,7 @@ public class TrainingSummaryService {
         return Optional.ofNullable(mongoTemplate.findOne(query, TrainingSummary.class));
 
     }
+
 
     public TrainingSummary findTrainingSummaryById(BigInteger id) {
         return trainingSummaryRepository.findById(id).orElse(null);

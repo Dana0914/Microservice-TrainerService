@@ -34,7 +34,7 @@ public class TrainingSessionConsumerService {
             TrainingDTO trainingDTO = objectMapper.readValue(message, TrainingDTO.class);
             logger.info("Received Message: {}", message);
 
-            trainerWorkloadService.updateTrainerRecord(trainingDTO);
+            trainerWorkloadService.updateTrainingRecordIfTrainerExists(trainingDTO);
 
         } catch (Exception e) {
             logger.error("Error while receiving message {}", e.getMessage());

@@ -36,7 +36,7 @@ public class TrainingSessionProcessingService {
     }
 
 
-    public void updateTrainerRecord(TrainingDTO request) throws ResourceNotFoundException {
+    public void updateTrainingRecordIfTrainerExists(TrainingDTO request) throws ResourceNotFoundException {
         Optional<Trainer> trainer = trainerService.findTrainerByUsername(request.getTrainerUsername());
 
         if (trainer.isEmpty()) {
@@ -62,7 +62,7 @@ public class TrainingSessionProcessingService {
         trainingService.createTraining(training);
         logger.info("Training created {} ", training);
 
-        //calculateTrainingSummaryPerYearAndMonth(training);
+        calculateTrainingSummaryPerYearAndMonth(training);
 
 
     }

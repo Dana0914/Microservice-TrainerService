@@ -58,7 +58,6 @@ public class TrainingSummaryStepDefinition {
         trainingSummary.setId(BigInteger.valueOf(Integer.parseInt(trainingMap.get("id"))));
         trainingSummary.setTrainingSummaryDuration(Integer.valueOf(trainingMap.get("trainingSummaryDuration") + training.getDuration()));
 
-        trainingSummaryService.createTrainingSummary(trainingSummary);
 
     }
 
@@ -88,7 +87,6 @@ public class TrainingSummaryStepDefinition {
         trainingSummary.setId(BigInteger.valueOf(Integer.parseInt(trainingMap.get("id"))));
         trainingSummary.setTrainingSummaryDuration(Integer.valueOf(trainingMap.get("trainingSummaryDuration")));
 
-        trainingSummaryService.createTrainingSummary(trainingSummary);
     }
 
     @When("I update the training summary by id {int}")
@@ -134,7 +132,8 @@ public class TrainingSummaryStepDefinition {
 
     @When("I search for training summary with year {int} and month {int}")
     public void iSearchForTrainingSummaryWithYearAndMonth(int arg0, int arg1) {
-        foundTrainingSummary = trainingSummaryService.findTrainingSummaryByYearAndMonth(arg0, arg1).orElse(null);
+        foundTrainingSummary = trainingSummaryService.findTrainingSummaryByYearAndMonth(arg0, arg1)
+                .orElse(null);
     }
 
     @Then("training summary should return no result")

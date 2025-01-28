@@ -42,7 +42,7 @@ public class TrainingSummaryProcessingController {
             @RequestBody TrainingDTO request) {
 
         try {
-            processingService.updateTrainerRecord(request);
+            processingService.updateTrainingRecordIfTrainerExists(request);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(request, HttpStatus.NOT_FOUND);
         }
